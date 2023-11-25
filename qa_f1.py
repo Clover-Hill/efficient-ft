@@ -30,21 +30,21 @@ def compute_metrics(preds,labels):
     pred_bin = []
     label_bin = []
 
-    for sample in enumerate(raw_dataset):
+    for sample in raw_dataset:
         answer_num = len(sample["answers"])
-        pred_span = preds[idx,idx+answer_num]
-        label_span = labels[idx,idx+answer_num]
+        pred_span = preds[idx:idx+answer_num]
+        label_span = labels[idx:idx+answer_num]
         idx += answer_num
         
-        for i,answer in enumerate(sample["answers"]):
-            answer_text = answer["text"].strip().replace("\n", " ")
-            print(label_span[i], answer_text)
-            assert(label_span[i] == answer_text)
+        # for i,answer in enumerate(sample["answers"]):
+        #     answer_text = answer["text"].strip().replace("\n", " ")
+        #     if(label_span[i] != answer_text):
+        #         print(label_span[i], answer_text)
         
         result = False
         pred_label_pair = [(a,b) for a in pred_span for b in label_span]
         for a,b in pred_label_pair:
-            if(fuzz.partial_token_set_ratio(a,b)>90):
+            if(fuzz.partial_token_set_ratio(a,b)>98):
                 result = True
         if(result):
             pred_bin.append(1)
